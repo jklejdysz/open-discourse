@@ -30,11 +30,15 @@ mps = {
     "death_date": [],
     "gender": [],
     "profession": [],
+    "religion": [],
+    "family": [],
     "constituency": [],
     "aristocracy": [],
     "academic_title": [],
     "institution_type": [],
     "institution_name": [],
+    "institution_start_dt": [],
+    "institution_end_dt": []
 }
 
 last_names_to_revisit = []
@@ -63,6 +67,8 @@ for mdb in tree.iter("MDB"):
 
     gender = mdb.findtext("BIOGRAFISCHE_ANGABEN/GESCHLECHT")
     profession = mdb.findtext("BIOGRAFISCHE_ANGABEN/BERUF")
+    religion = mdb.findtext("BIOGRAFISCHE_ANGABEN/RELIGION")
+    family = mdb.findtext("BIOGRAFISCHE_ANGABEN/FAMILIENSTAND")
 
     # Iterate over all name entries for the poltiician_id, e.g. necessary if
     # name has changed due to a marriage or losing/gaining of titles like "Dr."
@@ -92,6 +98,10 @@ for mdb in tree.iter("MDB"):
                 institution_name = institution.findtext("INS_LANG")
                 institution_type = institution.findtext("INSART_LANG")
 
+                # start and end date help us to deal with changing faction affiliations over time
+                institution_start_dt = institution.findtext("MDBINS_VON")
+                institution_end_dt = institution.findtext("MDBINS_BIS")
+
                 mps["ui"].append(ui)
                 mps["electoral_term"].append(electoral_term_number)
                 mps["first_name"].append(first_name)
@@ -102,12 +112,16 @@ for mdb in tree.iter("MDB"):
                 mps["death_date"].append(death_date)
                 mps["gender"].append(gender)
                 mps["profession"].append(profession)
+                mps["religion"].append(religion)
+                mps["family"].append(family)
                 mps["constituency"].append(constituency)
                 mps["aristocracy"].append(aristocracy)
                 mps["academic_title"].append(academic_title)
 
                 mps["institution_type"].append(institution_type)
                 mps["institution_name"].append(institution_name)
+                mps["institution_start_dt"].append(institution_start_dt)
+                mps["institution_end_dt"].append(institution_end_dt)
 
 
 mps = pd.DataFrame(mps)

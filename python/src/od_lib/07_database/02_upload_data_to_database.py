@@ -41,6 +41,8 @@ politicians = politicians.drop(
         "faction_id",
         "institution_type",
         "institution_name",
+        "institution_start_dt",
+        "institution_end_dt",
         "constituency",
     ],
     axis=1,
@@ -56,6 +58,8 @@ politicians.columns = [
     "death_date",
     "gender",
     "profession",
+    "religion",
+    "family",
     "aristocracy",
     "academic_title",
 ]
@@ -70,6 +74,8 @@ series = {
     "death_date": None,
     "gender": None,
     "profession": None,
+    "religion": None,
+    "family": None,
     "aristocracy": None,
     "academic_title": None,
 }
@@ -110,6 +116,7 @@ electoral_terms.to_sql(
     "electoral_terms", engine, if_exists="append", schema="open_discourse", index=False
 )
 
+electoral_terms.to_csv(os.path.join(path_definitions.DATABASE, "electoral_terms.csv"), index = False)
 
 print("starting politicians..")
 
@@ -117,6 +124,9 @@ politicians = politicians.where((pd.notnull(politicians)), None)
 
 politicians.birth_date = politicians.birth_date.apply(convert_date_politicians)
 politicians.death_date = politicians.death_date.apply(convert_date_politicians)
+
+politicians.to_csv(os.path.join(path_definitions.DATABASE, "politicians.csv"), index = False)
+
 
 politicians.to_sql(
     "politicians", engine, if_exists="append", schema="open_discourse", index=False
@@ -221,6 +231,9 @@ factions = pd.DataFrame(
 
 factions.id = factions.id.astype(int)
 
+factions.to_csv(os.path.join(path_definitions.DATABASE, "factions.csv"), index = False)
+
+
 factions.to_sql(
     "factions", engine, if_exists="append", schema="open_discourse", index=False
 )
@@ -236,6 +249,8 @@ speeches = speeches.where((pd.notnull(speeches)), None)
 speeches.position_long.replace([r"^\s*$"], [None], regex=True, inplace=True)
 speeches.politician_id = speeches.apply(check_politicians, axis=1)
 
+speeches.to_csv(os.path.join(path_definitions.DATABASE, "speeches.csv"), index = False)
+
 speeches.to_sql(
     "speeches", engine, if_exists="append", schema="open_discourse", index=False
 )
@@ -248,6 +263,9 @@ contributions_extended = pd.read_pickle(CONTRIBUTIONS_EXTENDED)
 contributions_extended = contributions_extended.where(
     (pd.notnull(contributions_extended)), None
 )
+
+contributions_extended.to_csv(os.path.join(path_definitions.DATABASE, "contributions_extended.csv"), index = False)
+
 
 contributions_extended.to_sql(
     "contributions_extended",
@@ -284,6 +302,9 @@ contributions_simplified = contributions_simplified.where(
 
 contributions_simplified["id"] = range(len(contributions_simplified.content))
 
+contributions_simplified.to_csv(os.path.join(path_definitions.DATABASE, "contributions_simplified.csv"), index = False)
+
+
 contributions_simplified.to_sql(
     "contributions_simplified",
     engine,
@@ -293,3 +314,12 @@ contributions_simplified.to_sql(
 )
 
 print("finished")
+
+
+hg_part0 = pd.read_table(os.path.join(path_definitions.DATA_FINAL, 'haushaltsgesetz_dates_1_2.txt'), header = None)
+hg_part1 = pd.read_table(os.path.join(path_definitions.DATA_FINAL, 'haushaltsgesetz_dates.txt'), header = None)
+hg_part2 = pd.read_table(os.path.join(path_definitions.DATA_FINAL, 'haushaltsgesetz_dates_19_20.txt'), header = None)
+
+hg_dt = pd.concat([hg_part0, hg_part1, hg_part2], ignore_index=True)
+
+hg_dt.to_csv(os.path.join(path_definitions.DATABASE, "haushaltsgesetz_dates.csv"), header=None, index=False, sep=' ', mode='a')
