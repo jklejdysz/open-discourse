@@ -6,8 +6,10 @@ docker-compose up -d database
 sleep 20
 cd ../database
 yarn run db:update:local
-cd ../python
+cd python
 . .venv/bin/activate
+python -m pip install -r requirements.txt
+pip install psycopg2-binary
 mkdir -p logs
 
 src_path=src/od_lib
