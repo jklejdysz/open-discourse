@@ -11,11 +11,6 @@ RAW_XML = path_definitions.RAW_XML
 # output directory
 RAW_TXT = path_definitions.RAW_TXT
 
-HAUSHALTSGESETZ_OUTPUT = path_definitions.FINAL
-
-haushaltsgesetz_dates = []
-haushaltsgesetz_docnum = []
-
 if not os.path.exists(RAW_TXT):
     os.makedirs(RAW_TXT)
 
@@ -78,11 +73,6 @@ for electoral_term_folder in sorted(os.listdir(RAW_XML)):
             # not found, when appearing at the end of the file.
 
 
-            if 'Haushaltsgesetz' in toc:
-                print("Found budget discussion")
-                haushaltsgesetz_dates.append(meta_data["date"])
-                haushaltsgesetz_docnum.append(meta_data["document_number"])
-
             text_corpus += "\n\nEND OF FILE"
 
             session_content = ""
@@ -120,9 +110,6 @@ for electoral_term_folder in sorted(os.listdir(RAW_XML)):
             with open(os.path.join(save_path, "meta_data.xml"), "wb") as result_file:
                 result_file.write(dicttoxml.dicttoxml(meta_data))
 
+            with open(os.path.join(save_path, "toc.txt"), "w") as text_file:
+                text_file.write(toc)
 
-with open(os.path.join(HAUSHALTSGESETZ_OUTPUT, "haushaltsgesetz_dates_1_2.txt"), "w") as text_file:
-    text_file.write("\n".join(haushaltsgesetz_dates))
-
-with open(os.path.join(HAUSHALTSGESETZ_OUTPUT, "haushaltsgesetz_docnum_1_2.txt"), "w") as text_file:
-    text_file.write("\n".join(haushaltsgesetz_docnum))
