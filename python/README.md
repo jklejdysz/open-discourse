@@ -11,14 +11,14 @@ load the requirements file, pip install psycopg2-binary instead psycopg (error),
 python -m pip install -r requirements.txt
 
 ## JK changes:
--
+
 - fixed missing party assignments (09_amendments/missing_faction_id)
 - removed speeches where long piece is repeated (09_amendments/duplicate_speeches)
--
+01_preprocessing/06_extract_mps_from_mp_base_data:
+- added more personal information on politicians from MPS data
 01_preprocessing/*_split_xml* files:
-- extracted information about on budget discussion on the agenda (table of contents).
-- added more personal information on politicians
-- electoral term 1 and 2: Correct the pattern matching beginning of the spoken content
+- added extracting information about table of contents and saving it to a file.
+- electoral term 1 and 2: Corrected the pattern matching beginning of the spoken content
 
 
 ## Folders
