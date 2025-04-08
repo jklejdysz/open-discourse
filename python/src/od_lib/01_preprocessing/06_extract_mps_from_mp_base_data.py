@@ -4,6 +4,8 @@ import xml.etree.ElementTree as et
 import os
 import regex
 
+# wahlkreis added
+
 # input directory
 MP_BASE_DATA = path_definitions.MP_BASE_DATA
 
@@ -38,11 +40,16 @@ mps = {
     "institution_type": [],
     "institution_name": [],
     "institution_start_dt": [],
-    "institution_end_dt": []
+    "institution_end_dt": [],
+    "wkr_number": [],
+    "wkr_land":[],
+    "mandate_type":[]
 }
 
 last_names_to_revisit = []
 i = 0
+
+
 # Iterate over all MDBs (Mitglieder des Bundestages) in XML File.
 for mdb in tree.iter("MDB"):
     ui = mdb.findtext("ID")
@@ -74,13 +81,15 @@ for mdb in tree.iter("MDB"):
     # name has changed due to a marriage or losing/gaining of titles like "Dr."
     # Or if in another period the location information
     # changed "" -> "Bremerhaven"
+
+    # Some names are appearing twice e.g. Arendt. This will be handled later. TODO: Check this.
     for name in mdb.findall("./NAMEN/NAME"):
         first_name = name.findtext("VORNAME")
         last_name = name.findtext("NACHNAME")
         constituency = name.findtext("ORTSZUSATZ")
         aristocracy = name.findtext("ADEL")
         academic_title = name.findtext("AKAD_TITEL")
-
+        print(first_name)
         # Hardcode Schmidt (Weilburg). Note: This makes 4 entries for
         # Frank Schmidt!!
         if regex.search(r"\(Weilburg\)", last_name):
@@ -91,6 +100,15 @@ for mdb in tree.iter("MDB"):
         # of the Bundestag.
         for electoral_term in mdb.findall("./WAHLPERIODEN/WAHLPERIODE"):
             electoral_term_number = electoral_term.findtext("WP")
+            wkr_number = electoral_term.findtext("WKR_NUMMER")
+            wkr_list = electoral_term.findtext("LISTE")
+            wkr_land = electoral_term.findtext("WKR_LAND")
+            if wkr_list != '':
+                wkr_land = wkr_list
+            mandate_type = electoral_term.findtext("MANDATSART")
+
+
+            print(electoral_term_number)
 
             # Iterate over faction membership in each parliament period, e.g.
             # multiple entries exist if faction was changed within period.
@@ -102,6 +120,7 @@ for mdb in tree.iter("MDB"):
                 institution_start_dt = institution.findtext("MDBINS_VON")
                 institution_end_dt = institution.findtext("MDBINS_BIS")
 
+                print(constituency)
                 mps["ui"].append(ui)
                 mps["electoral_term"].append(electoral_term_number)
                 mps["first_name"].append(first_name)
@@ -122,10 +141,14 @@ for mdb in tree.iter("MDB"):
                 mps["institution_name"].append(institution_name)
                 mps["institution_start_dt"].append(institution_start_dt)
                 mps["institution_end_dt"].append(institution_end_dt)
+                mps['wkr_number'].append(wkr_number)
+                mps['wkr_land'].append(wkr_land)
+                mps['mandate_type'].append(mandate_type)
 
 
 mps = pd.DataFrame(mps)
 mps.constituency = mps.constituency.str.replace("[)(]", "")
 mps = mps.astype(dtype={"ui": "int64", "birth_date": "str", "death_date": "str"})
-
+mps.groupby('wkr_land').count()
+mps[(mps.wkr_land=='')]['ui']
 mps.to_pickle(save_path)

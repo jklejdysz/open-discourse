@@ -17,7 +17,11 @@ URL = "https://de.wikipedia.org/wiki/Liste_der_deutschen_Regierungsmitglieder_se
 
 page = requests.get(URL)
 soup = BeautifulSoup(page.text, "html.parser")
-main_section = soup.find("div", {"id": "mw-content-text"})
+
+# Beware: The structure of the HTML is not consistent.
+# Before: "mw-content-text", now: "mw-content-ltr mw-parser-output"
+#main_section = soup.find("div", {"id": "mw-content-text"})
+main_section = soup.find("div", {"class": "mw-content-ltr mw-parser-output"})
 
 mgs = {
     "ui": [],
@@ -36,17 +40,19 @@ ui = 0
 
 for div in main_section.find_all("div", recursive=False):
     for ul in div.find_all("ul", recursive=False):
+        #print(ul)
         for li in ul.find_all("li", recursive=False):
+            print(li)
             find_all_a = li.find_all("a", recursive=False)
             name = find_all_a[0].text
-
+            print(name)
             if "Liste" in name or "Kabinett" in name:
                 break
 
             # This lines exclude Kristine Schröder because of her name change
             # due to marriage she has another structure in here HTML part, and
             # CDU is matched as name.
-            # ToDo: Add second name as a entry at the end, not that important
+            # ToDo: Add second name as an entry at the end, not that important
             # as she is member of StammdatenXML
             if "CDU" in name:
                 continue
@@ -148,3 +154,6 @@ for div in main_section.find_all("div", recursive=False):
 
 mgs = pd.DataFrame(mgs)
 mgs.to_pickle(save_path)
+
+
+

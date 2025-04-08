@@ -26,12 +26,12 @@ contributions_simplified = pd.DataFrame(
 for electoral_term_folder in sorted(os.listdir(SPEECH_CONTENT_INPUT)):
     if "electoral_term" not in electoral_term_folder:
         continue
-    if len(sys.argv) > 1:
-        if (
-            str(int(regex.sub("electoral_term_", "", electoral_term_folder)))
-            not in sys.argv
-        ):
-            continue
+   # if len(sys.argv) > 1:
+   #     if (
+   #         str(int(regex.sub("electoral_term_", "", electoral_term_folder)))
+   #         not in sys.argv
+   #     ):
+   #         continue
     electoral_term_folder_path = os.path.join(
         SPEECH_CONTENT_INPUT, electoral_term_folder
     )
@@ -110,12 +110,15 @@ for electoral_term_folder in sorted(os.listdir(SPEECH_CONTENT_INPUT)):
             )
         )
 
-        # save the spoken_conten to pickle
-        speech_content.to_pickle(
-            os.path.join(
-                SPEECH_CONTENT_OUTPUT, electoral_term_folder, speech_content_file
+        # save the spoken_content to pickle
+        if not os.path.exists(os.path.join(SPEECH_CONTENT_OUTPUT, electoral_term_folder, speech_content_file)):
+            print("saved to file")
+
+            speech_content.to_pickle(
+                os.path.join(
+                    SPEECH_CONTENT_OUTPUT, electoral_term_folder, speech_content_file
+                )
             )
-        )
 
 contributions_simplified.to_pickle(
     os.path.join(CONTRIBUTIONS_SIMPLIFIED, "contributions_simplified.pkl")

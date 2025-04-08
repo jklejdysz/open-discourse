@@ -22,6 +22,9 @@ election_periods = [
     },
 ]
 
+
+#election_periods = [election_periods[1]]
+
 for election_period in election_periods:
     OUTPUT_PATH = os.path.join(
         ELECTORAL_TERM_19_20_OUTPUT,
@@ -43,20 +46,24 @@ for election_period in election_periods:
 
         # scrape for links
         for link in soup.find_all("a", attrs={"href": regex.compile("xml$")}):
+            print(link)
             reached_end = False
             url = "https://www.bundestag.de" + link.get("href")
             page = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-            session = regex.search(r"\d{5}(?=-data\.xml)", url).group(0)
+            pattern = r"\d{5}(?=-data\.xml)|\d{5}(?=\.xml)"
+            session = regex.search(pattern, url).group(0)
 
             print(session)
-            with open(os.path.join(OUTPUT_PATH, session + ".xml"), "w") as file:
-                file.write(
-                    regex.sub(
-                        "</sub>",
-                        "",
-                        regex.sub("<sub>", "", page.content.decode("utf-8")),
+
+            if not os.path.exists(os.path.join(OUTPUT_PATH, session + ".xml")):
+                with open(os.path.join(OUTPUT_PATH, session + ".xml"), "w") as file:
+                    file.write(
+                        regex.sub(
+                            "</sub>",
+                            "",
+                            regex.sub("<sub>", "", page.content.decode("utf-8")),
+                        )
                     )
-                )
 
             time.sleep(0.1)
         offset += 10

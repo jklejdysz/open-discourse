@@ -3,6 +3,7 @@ import od_lib.definitions.path_definitions as path_definitions
 import pandas as pd
 import os
 
+# DO NOT RUN
 # Input
 PEOPLE = os.path.join(path_definitions.DATA_FINAL, "politicians.csv")
 politicians = pd.read_csv(PEOPLE)
@@ -13,7 +14,7 @@ factions = pd.read_pickle(os.path.join(FACTIONS, "factions.pkl"))
 speeches = pd.read_csv(os.path.join(path_definitions.DATABASE, "speeches.csv"))
 
 
-# Output direcory
+# Output directory
 
 save_path = path_definitions.DATABASE
 

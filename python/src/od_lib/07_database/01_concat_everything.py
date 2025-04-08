@@ -49,6 +49,9 @@ for electoral_term_folder in sorted(os.listdir(SPEECH_CONTENT_INPUT)):
         if ".pkl" not in speech_content_file:
             continue
 
+        if speech_content_file.startswith('.'):
+            continue
+
         print(speech_content_file)
 
         speech_content = pd.read_pickle(
@@ -77,8 +80,8 @@ speech_content_01_18 = speech_content_01_18.loc[
 
 speech_content_01_18 = speech_content_01_18.rename(columns={"speech_id": "id"})
 
-
 speech_content_01_18["first_name"] = speech_content_01_18["first_name"].apply(" ".join)
+
 
 speech_content_01_18["id"] = list(range(len(speech_content_01_18)))
 
@@ -86,33 +89,31 @@ speech_content_01_18["session"] = speech_content_01_18["session"].str.replace(
     r"\.pkl", ""
 )
 
-
 meta_data = {}
-
 # Open every xml plenar file in every legislature period.
 for electoral_term_folder in sorted(os.listdir(RAW_XML)):
     electoral_term_folder_path = os.path.join(RAW_XML, electoral_term_folder)
     # Skip e.g. the .DS_Store file.
     if not os.path.isdir(electoral_term_folder_path):
         continue
-
-    if len(sys.argv) > 1:
-        if (
-            str(int(regex.sub("electoral_term_", "", electoral_term_folder)))
-            not in sys.argv
-        ):
-            continue
-
+# For command line only?
+#    if len(sys.argv) > 1:
+#        if (
+#            str(int(regex.sub("electoral_term_", "", electoral_term_folder)))
+#            not in sys.argv
+#        ):
+#            continue
     print(electoral_term_folder)
     for xml_plenar_file in sorted(os.listdir(electoral_term_folder_path)):
         if ".xml" in xml_plenar_file:
             print(xml_plenar_file)
+            if xml_plenar_file.startswith('.'):
+                continue
             path = os.path.join(electoral_term_folder_path, xml_plenar_file)
             tree = et.parse(path)
             # Get the document number, the date of the session and the content.
             # meta_data["document_number"].append(tree.find("NR").text)
-            # meta_data["date"].append(tree.find("DATUM").text)
-            # document_number = tree.find("NR").text
+            #meta_data["date"].append(tree.find("DATUM").text)
             date = time.mktime(
                 datetime.datetime.strptime(
                     tree.find("DATUM").text, "%d.%m.%Y"
@@ -127,8 +128,10 @@ speech_content_01_18.insert(4, "document_url", "")
 speech_content_01_18["electoral_term"] = speech_content_01_18["session"].apply(
     lambda x: str(x)[:2]
 )
+print(sum(speech_content_01_18["electoral_term"].isna()))
 speech_content_01_18["session"] = speech_content_01_18["session"].astype("int32")
 speech_content_01_18["date"] = speech_content_01_18["session"].apply(meta_data.get)
+print(sum(speech_content_01_18["date"].isna())) #0
 speech_content_01_18["session"] = speech_content_01_18["session"].apply(
     lambda x: str(x)[-3:]
 )

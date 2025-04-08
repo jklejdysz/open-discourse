@@ -57,3 +57,6 @@ mp_base_data_path = os.path.join(path_definitions.DATA_RAW, "MP_BASE_DATA")
 if not os.path.exists(mp_base_data_path):
     os.makedirs(mp_base_data_path)
 z.extractall(mp_base_data_path)
+
+
+

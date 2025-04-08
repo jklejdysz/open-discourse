@@ -214,9 +214,14 @@ for (
                 "aristocracy": possible_matches.aristocracy.iloc[0],
                 "academic_title": possible_matches.academic_title.iloc[0],
                 "institution_type": "Regierungsmitglied",
+                "institution_start_dt" : possible_matches.institution_start_dt.iloc[0],
+                "institution_end_dt" : possible_matches.institution_end_dt.iloc[0],
+                "wkr_number" : possible_matches.wkr_number.iloc[0],
+                "wkr_land" : possible_matches.wkr_land.iloc[0],
+                "mandate_type" : possible_matches.mandate_type.iloc[0],
                 "institution_name": position,
             }
-            politicians = politicians.append(pd.Series(series), ignore_index=True)
+            politicians = politicians._append(pd.Series(series), ignore_index=True)
             # success_counter += 1
     elif len(possible_matches) > 1:
         # This doesn't get reached
@@ -251,9 +256,14 @@ for (
                     "aristocracy": possible_matches.aristocracy.iloc[0],
                     "academic_title": possible_matches.academic_title.iloc[0],
                     "institution_type": "Regierungsmitglied",
+                    "institution_start_dt": possible_matches.institution_start_dt.iloc[0],
+                    "institution_end_dt": possible_matches.institution_end_dt.iloc[0],
+                    "wkr_number": possible_matches.wkr_number.iloc[0],
+                    "wkr_land": possible_matches.wkr_land.iloc[0],
+                    "mandate_type": possible_matches.mandate_type.iloc[0],
                     "institution_name": position,
                 }
-                politicians = politicians.append(pd.Series(series), ignore_index=True)
+                politicians = politicians._append(pd.Series(series), ignore_index=True)
         elif len(possible_matches) > 1:
             # This doesn't get reached
             pass
@@ -278,6 +288,10 @@ for (
                     "institution_type": "Regierungsmitglied",
                     "institution_name": position,
                 }
-                politicians = politicians.append(pd.Series(series), ignore_index=True)
+                politicians = politicians._append(pd.Series(series), ignore_index=True)
+
+politicians['electoral_term'] = politicians['electoral_term'].astype(str).astype(int)
+politicians[politicians.institution_type=="Regierungsmitglied"]
 
 politicians.to_csv(os.path.join(DATA_FINAL, "politicians.csv"), index=False)
+

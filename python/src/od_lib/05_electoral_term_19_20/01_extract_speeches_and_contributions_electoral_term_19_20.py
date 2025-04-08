@@ -231,7 +231,7 @@ for electoral_term_folder in sorted(os.listdir(ELECTORAL_TERM_19_20_INPUT)):
         date = (
             datetime.datetime.strptime(date, "%d.%m.%Y") - datetime.datetime(1970, 1, 1)
         ).total_seconds()
-
+        print(date)
         root = session_content.getroot()
 
         tops = root.findall("tagesordnungspunkt")
@@ -266,7 +266,10 @@ for electoral_term_folder in sorted(os.listdir(ELECTORAL_TERM_19_20_INPUT)):
                 try:
                     position_raw = name.find("fraktion").text
                 except (ValueError, AttributeError):
-                    position_raw = name.find("rolle").find("rolle_lang").text
+                    try:
+                        position_raw = name.find("rolle").find("rolle_lang").text
+                    except (ValueError, AttributeError):
+                        position_raw = ''
                 faction_abbrev = get_faction_abbrev(
                     str(position_raw), faction_patterns=faction_patterns
                 )

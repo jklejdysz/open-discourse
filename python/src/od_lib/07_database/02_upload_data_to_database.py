@@ -45,6 +45,9 @@ politicians = politicians.drop(
         "institution_start_dt",
         "institution_end_dt",
         "constituency",
+        "wkr_number",
+        "wkr_land",
+        "mandate_type"
     ],
     axis=1,
 )
@@ -80,9 +83,8 @@ series = {
     "aristocracy": None,
     "academic_title": None,
 }
-
-politicians = politicians.append(pd.Series(series), ignore_index=True)
-
+# New pandas version: _append
+politicians = politicians._append(pd.Series(series), ignore_index=True)
 
 def convert_date_politicians(date):
     try:
@@ -240,16 +242,58 @@ if send_to_db:
     factions.to_sql(
         "factions", engine, if_exists="append", schema="open_discourse", index=False
     )
-    
+
 print("starting speeches..")
 
-speeches = pd.read_pickle(SPOKEN_CONTENT)
+speeches = pd.read_pickle(SPOKEN_CONTENT) # shape (950898, 12)
+speeches.shape
+speeches[speeches.electoral_term==1 & (speeches.session==19)].shape
+
+
 
 speeches["date"] = speeches["date"].apply(convert_date_speeches)
-
+speeches.shape
 speeches = speeches.where((pd.notnull(speeches)), None)
 speeches.position_long.replace([r"^\s*$"], [None], regex=True, inplace=True)
 speeches.politician_id = speeches.apply(check_politicians, axis=1)
+speeches.shape
+
+
+# Unfortunately, the original code base provided by open discourse does not provide the data for:
+#Electoral term 1 has a gap larger than 1 between sessions 18 and 20.
+#Electoral term 1 has a gap larger than 1 between sessions 40 and 43.
+#Electoral term 1 has a gap larger than 1 between sessions 182 and 184.
+#Electoral term 1 has a gap larger than 1 between sessions 222 and 225.
+#Electoral term 1 has a gap larger than 1 between sessions 279 and 282.
+#Electoral term 2 has a gap larger than 1 between sessions 187 and 189.
+# There was a bug in their code, which I discovered and fixed later.
+# 1 & 2 electoral terms are not important to our project, but in order to keep id consistent
+# I have to remove the sessions which were previously missing:
+
+speeches['remove'] = ((speeches.electoral_term==1) & (speeches.session.isin([19, 41, 42, 183, 223, 224, 280, 281])))| ((speeches.electoral_term==2) & (speeches.session.isin([188])))
+sum(speeches['remove'])
+speeches.shape[0]
+speeches = speeches[~speeches['remove']]
+
+# Redefine id
+speeches.loc[speeches.electoral_term<=18, "id"] = list(range(len(speeches[speeches.electoral_term<=18])))
+
+
+def check_session_gaps(group):
+    group = group.sort_values()
+    gaps = group.diff()
+    gap_pairs = [(group.iloc[i-1], group.iloc[i]) for i in range(1, len(group)) if gaps.iloc[i] > 1]
+    return gap_pairs
+
+gap_pairs_exist = speeches.groupby('electoral_term')['session'].apply(check_session_gaps)
+
+# Print electoral terms with gaps in sessions larger than 1 and the pair of sessions
+for term, gap_pairs in gap_pairs_exist.items():
+    if gap_pairs:
+        for pair in gap_pairs:
+            print(f'Electoral term {term} has a gap larger than 1 between sessions {pair[0]} and {pair[1]}.')
+
+
 
 speeches.to_csv(os.path.join(path_definitions.DATABASE, "speeches.csv"), index = False)
 

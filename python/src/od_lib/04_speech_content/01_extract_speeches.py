@@ -85,12 +85,12 @@ for electoral_term_folder in sorted(os.listdir(RAW_TXT)):
     else:
         raise ValueError("You should not land heregex.")
 
-    if len(sys.argv) > 1:
-        if (
-            str(int(regex.sub("electoral_term_", "", electoral_term_folder)))
-            not in sys.argv
-        ):
-            continue
+    #if len(sys.argv) > 1:
+    #    if (
+    #        str(int(regex.sub("electoral_term_", "", electoral_term_folder)))
+    #        not in sys.argv
+    #    ):
+    #        continue
 
     faction_speaker_pattern = regex.compile(
         faction_speaker_pattern_str.format(
@@ -177,4 +177,9 @@ for electoral_term_folder in sorted(os.listdir(RAW_TXT)):
 
         session_df["speech_content"] = speech_content
 
-        session_df.to_pickle(os.path.join(save_path, session + ".pkl"))
+        if not os.path.exists(os.path.join(save_path, session + ".pkl")):
+            print("saved to file")
+            session_df.to_pickle(os.path.join(save_path, session + ".pkl"))
+
+
+

@@ -101,12 +101,12 @@ for electoral_term_folder in sorted(os.listdir(SPEECH_CONTENT_INPUT)):
 
     if electoral_term_folder == ".DS_Store":
         continue
-    if len(sys.argv) > 1:
-        if (
-            str(int(regex.sub("electoral_term_", "", electoral_term_folder)))
-            not in sys.argv
-        ):
-            continue
+    #if len(sys.argv) > 1:
+    #    if (
+    #        str(int(regex.sub("electoral_term_", "", electoral_term_folder)))
+    #        not in sys.argv
+    #    ):
+    #        continue
     electoral_term_folder_path = os.path.join(
         SPEECH_CONTENT_INPUT, electoral_term_folder
     )
@@ -241,4 +241,7 @@ for electoral_term_folder in sorted(os.listdir(SPEECH_CONTENT_INPUT)):
                     speech_content.faction_id.at[index] = -1
 
         speech_content = speech_content.drop(columns=["position_raw", "name_raw"])
-        speech_content.to_pickle(os.path.join(save_path, speech_content_file))
+
+        if not os.path.exists(os.path.join(save_path, speech_content_file)):
+            print("saved to file")
+            speech_content.to_pickle(os.path.join(save_path, speech_content_file))

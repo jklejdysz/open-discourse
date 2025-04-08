@@ -89,4 +89,6 @@ for electoral_term_folder in sorted(os.listdir(SPEECH_CONTENT_INPUT)):
             speech_content, politicians_electoral_term, mgs_electoral_term, politicians
         )
 
-        speech_content_matched.to_pickle(os.path.join(save_path, speech_content_file))
+        if not os.path.exists(os.path.join(save_path, speech_content_file)):
+            print("saved to file")
+            speech_content_matched.to_pickle(os.path.join(save_path, speech_content_file))
