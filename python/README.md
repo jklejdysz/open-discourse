@@ -19,7 +19,7 @@ python -m pip install -r requirements.txt
 01_preprocessing/*_split_xml* files:
 - added extracting information about table of contents and saving it to a file.
 - electoral term 1 and 2: Corrected the pattern matching beginning of the spoken content
-
+- Stammdaten xml - updated 12.08.2024, source: https://www.bundestag.de/services/opendata
 
 ## Folders
 

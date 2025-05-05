@@ -227,7 +227,7 @@ electoral_terms = [
             - datetime.datetime(1970, 1, 1)
         ).total_seconds(),
         "end_date": (
-            datetime.datetime.strptime("2025-10-29", "%Y-%m-%d")
+            datetime.datetime.strptime("2025-03-24", "%Y-%m-%d")
             - datetime.datetime(1970, 1, 1)
         ).total_seconds(),
     },
