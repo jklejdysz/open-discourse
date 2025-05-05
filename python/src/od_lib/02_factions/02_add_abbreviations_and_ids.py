@@ -15,10 +15,13 @@ if not os.path.exists(DATA_FINAL):
 factions = pd.read_pickle(os.path.join(FACTIONS_STAGE_01, "factions.pkl"))
 
 abbreviations_dict = {
+    "Gruppe BSW - Bündnis Sahra Wagenknecht - Vernunft und Gerechtigkeit": "BSW",
     "Alternative für Deutschland": "AfD",
+    'Fraktion Alternative für Deutschland': "AfD",
     "Fraktion Bayernpartei": "BP",
     "Fraktion Bündnis 90/Die Grünen": "Bündnis 90/Die Grünen",
     "Fraktion DIE LINKE.": "DIE LINKE.",
+    'Gruppe Die Linke': "DIE LINKE.",
     "Fraktion DP/DPB (Gast)": "DP/DPB",
     "Fraktion DRP (Gast)": "DRP",
     "Fraktion Demokratische Arbeitsgemeinschaft": "DA",
