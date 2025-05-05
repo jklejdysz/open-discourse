@@ -24,6 +24,7 @@ election_periods = [
 
 
 #election_periods = [election_periods[1]]
+#election_period = election_periods
 
 for election_period in election_periods:
     OUTPUT_PATH = os.path.join(
@@ -48,7 +49,7 @@ for election_period in election_periods:
         for link in soup.find_all("a", attrs={"href": regex.compile("xml$")}):
             print(link)
             reached_end = False
-            url = "https://www.bundestag.de" + link.get("href")
+            url = link.get("href") #"https://www.bundestag.de" + link.get("href")
             page = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
             pattern = r"\d{5}(?=-data\.xml)|\d{5}(?=\.xml)"
             session = regex.search(pattern, url).group(0)
