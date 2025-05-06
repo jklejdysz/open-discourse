@@ -132,6 +132,7 @@ def get_faction_abbrev(faction, faction_patterns):
     return None
 
 
+# It is important to run both electoral terms to keep the ids fixed
 speech_content_id = 1000000
 
 speech_content = pd.DataFrame(
@@ -454,3 +455,4 @@ for electoral_term_folder in sorted(os.listdir(ELECTORAL_TERM_19_20_INPUT)):
             "contributions_simplified.pkl",
         )
     )
+

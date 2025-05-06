@@ -1,11 +1,7 @@
-import numpy as np
-import re
-from tqdm import tqdm
 
 import os
 import od_lib.definitions.path_definitions as path_definitions
 import pandas as pd
-from datetime import datetime
 
 speeches = pd.read_csv(os.path.join(path_definitions.DATABASE, "speeches_revised.csv"))
 
@@ -55,8 +51,17 @@ speeches.to_csv(os.path.join(path_definitions.DATABASE, "speeches_revised.csv"),
 
 speeches[speeches.politician_id==-1].groupby(['electoral_term']).count()
 speeches.count()
-#speeches_prev = pd.read_csv(os.path.join(path_definitions.DATABASE, "speeches_revised copy.csv"))
 
-#speeches_prev.groupby(['electoral_term'])['id'].count() - speeches.groupby(['electoral_term'])['id'].count()
-
-#sum(speeches[speeches.electoral_term<20]['id']!=speeches_prev[speeches.electoral_term<20]['id'])
+# speeches_prev = pd.read_csv(os.path.join('/Users/justynaklejdysz/Documents/Projekty/open-discourse-custom/open-discourse/python/data/04_database copy',
+#                                          "speeches_revised.csv"))
+#
+# speeches_prev.groupby(['electoral_term'])['id'].count() - speeches.groupby(['electoral_term'])['id'].count()
+#
+# sum(speeches[speeches.electoral_term<20]['id']!=speeches_prev[speeches.electoral_term<20]['id'])
+#
+# columns_to_compare = ['id', 'date', 'speech_content']
+# dt_subset = speeches.iloc[:955581, :][columns_to_compare]
+# dt_prev_subset = speeches_prev[columns_to_compare]
+# dt_subset.equals(dt_prev_subset) #True
+#
+#

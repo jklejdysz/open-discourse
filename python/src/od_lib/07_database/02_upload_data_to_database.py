@@ -245,11 +245,8 @@ if send_to_db:
 
 print("starting speeches..")
 
-speeches = pd.read_pickle(SPOKEN_CONTENT) # shape (950898, 12)
+speeches = pd.read_pickle(SPOKEN_CONTENT) # shape (950898, 12) #(976728, 12)
 speeches.shape
-speeches[speeches.electoral_term==1 & (speeches.session==19)].shape
-
-
 
 speeches["date"] = speeches["date"].apply(convert_date_speeches)
 speeches.shape
@@ -268,7 +265,7 @@ speeches.shape
 #Electoral term 2 has a gap larger than 1 between sessions 187 and 189.
 # There was a bug in their code, which I discovered and fixed later.
 # 1 & 2 electoral terms are not important to our project, but in order to keep id consistent
-# I have to remove the sessions which were previously missing:
+# I had to remove the sessions which were previously missing:
 
 speeches['remove'] = ((speeches.electoral_term==1) & (speeches.session.isin([19, 41, 42, 183, 223, 224, 280, 281])))| ((speeches.electoral_term==2) & (speeches.session.isin([188])))
 sum(speeches['remove'])
