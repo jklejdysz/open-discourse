@@ -18,10 +18,11 @@ FACTIONS = path_definitions.DATA_FINAL
 factions = pd.read_pickle(os.path.join(FACTIONS, "factions.pkl"))
 
 speeches = pd.read_csv(os.path.join(path_definitions.DATABASE, "speeches.csv"))
+
 # Output direcory
 
 save_path = path_definitions.DATABASE
-
+save_path
 
 #
 politicians['constituency'].isna().sum()
@@ -61,7 +62,7 @@ politicians['institution_start_dt'] = politicians['institution_start_dt'].fillna
 politicians = politicians.sort_values(by=['ui', 'electoral_term', 'institution_start_dt', 'institution_end_dt', 'constituency'],
                                       ascending=[True, True, True, True, False])
 #politicians[politicians.last_name=='Arndt'][['ui', 'electoral_term', 'institution_start_dt', 'constituency', "wkr_number"]]
-politicians['ui'].nunique() #4376
+politicians['ui'].nunique() #4384 #4376
 # a DataFrame where each row represents the first occurrence of a unique combination of
 # #'ui', 'electoral_term', and 'institution_start_dt' in the original politicians DataFrame.
 politicians = politicians.groupby(['ui', 'electoral_term', 'institution_start_dt']).nth(0).reset_index()
@@ -89,7 +90,7 @@ politicians.institution_end_dt = np.where(condition,
                                           politicians.next_institution_start_dt-pd.Timedelta(days=1),
                                           politicians.institution_end_dt)
 
-print("Number of changes made:", np.sum(condition)) # 163 changes made
+print("Number of changes made:", np.sum(condition)) # 204 changes made #163 changes made
 
 
 # If the next institution start dt is grater than the current institution end dt by more than one day,
@@ -126,7 +127,6 @@ dt = speeches.merge(politicians[['ui', 'electoral_term', 'faction_id_hist',
                how = 'left',
                left_on = ['politician_id', 'electoral_term'],
                right_on = ['ui', 'electoral_term'])
-
 dt['institution_start_dt'] = dt['institution_start_dt'].fillna(start)
 dt['institution_end_dt'] = dt['institution_end_dt'].fillna(end)
 dt['history_start_dt'] = dt['history_start_dt'].fillna(start)
@@ -140,8 +140,11 @@ dt['missing_subs_history'] = np.where((dt.history_end_dt < dt.date) & (dt.histor
 dt.loc[dt['missing_subs_history'] == True , 'institution_end_dt'] = end
 dt.loc[dt['missing_prev_history'] == True , 'institution_start_dt'] = start
 
+dt['date'] = pd.to_datetime(dt['date']).dt.date
 dt['keep_rows'] = ((dt.date <= dt.institution_end_dt) & (dt.date >= dt.institution_start_dt)) #| (dt.history_start_dt> dt.date) | (dt.history_end_dt< dt.date)
 sum(dt['keep_rows'])
+dt.loc[dt.id == 1108343, ['institution_end_dt', 'institution_start_dt', "date", "keep_rows"]]
+
 dt = dt[dt.keep_rows == True]
 
 
@@ -182,3 +185,4 @@ dt.groupby('faction_id').count()
 dt.to_csv(os.path.join(path_definitions.DATABASE, "speeches_revised.csv"), index = False)
 
 #dt = pd.read_csv(os.path.join(path_definitions.DATABASE, "speeches_revised.csv"))
+dt[dt.id==1108343]
