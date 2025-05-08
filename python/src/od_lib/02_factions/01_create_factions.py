@@ -15,7 +15,7 @@ if not os.path.exists(FACTIONS_STAGE_01):
 
 # read data.
 mps = pd.read_pickle(os.path.join(POLITICIANS_STAGE_01, "mps.pkl"))
-
+mps.groupby(['institution_type']).count()
 factions = mps.institution_name.loc[(mps.institution_type == "Fraktion/Gruppe")]
 
 unique_factions = np.unique(factions)
