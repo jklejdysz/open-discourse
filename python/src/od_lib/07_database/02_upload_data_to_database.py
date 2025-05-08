@@ -139,100 +139,20 @@ if send_to_db:
 
 
 print("starting factions..")
-factions = pd.DataFrame(
-    {
-        "id": [
-            -1,
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19,
-            20,
-            21,
-            22,
-            23,
-            24,
-            25,
-            26,
-        ],
-        "abbreviation": [
-            "not found",
-            "AfD",
-            "BHE",
-            "BP",
-            "Grüne",
-            "CDU/CSU",
-            "DA",
-            "DIE LINKE.",
-            "DP",
-            "DP/DBP",
-            "DP/FVP",
-            "DPB",
-            "DRP",
-            "DRP/NR",
-            "FDP",
-            "FU",
-            "FVP",
-            "Fraktionslos",
-            "GB/BHE",
-            "Gast",
-            "KO",
-            "KPD",
-            "NR",
-            "PDS",
-            "SPD",
-            "SSW",
-            "WAV",
-            "Z",
-        ],
-        "full_name": [
-            "not found",
-            "Alternative für Deutschland",
-            "Block der Heimatvertriebenen und Entrechteten",
-            "Bayernpartei",
-            "Bündnis 90/Die Grünen",
-            "Christlich Demokratische Union Deutschlands/Christlich-Soziale Union in Bayern",
-            "Demokratische Arbeitsgemeinschaft",
-            "DIE LINKE.",
-            "Deutsche Partei",
-            "Deutsche Partei/Deutsche Partei Bayern",
-            "Deutsche Partei/Freie Volkspartei",
-            "Deutsche Partei Bayern",
-            "Deutsche Reformpartei",
-            "Deutsche Reichspartei/Nationale Rechte",
-            "Freie Demokratische Partei",
-            "Föderalistische Union",
-            "Freie Volkspartei",
-            "Fraktionslos",
-            "Gesamtdeutscher Block/Bund der Heimatvertriebenen und Entrechteten",
-            "Gast",
-            "Kraft/Oberländer-Gruppe",
-            "Kommunistische Partei Deutschlands",
-            "Nationale Rechte",
-            "Partei des Demokratischen Sozialismus",
-            "Sozialdemokratische Partei Deutschlands",
-            "Südschleswigscher Wählerverband",
-            "Wirtschaftliche Aufbau-Vereinigung",
-            "Deutsche Zentrumspartei",
-        ],
-    }
-)
+factions = pd.read_pickle(FACTIONS)
+factions = factions.sort_values('id')
+
+# Step 1: Drop duplicates based on 'id' and 'abbreviation'
+factions = factions.drop_duplicates(subset=['id', 'abbreviation'])
+
+# Step 2: Keep only 'id' and 'abbreviation' columns
+factions = factions[['id', 'abbreviation']]
+
+# Step 3: Add a row with id = -1 and abbreviation = 'not found'
+not_found_row = pd.DataFrame([{'id': -1, 'abbreviation': 'not found'}])
+factions = pd.concat([factions, not_found_row], ignore_index=True)
+
+# Earlier: factions were defined independently here again, mismatch in coding compared to 01_create_factions
 
 factions.id = factions.id.astype(int)
 
