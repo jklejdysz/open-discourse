@@ -1,4 +1,3 @@
-
 import os
 import od_lib.definitions.path_definitions as path_definitions
 import pandas as pd
@@ -46,6 +45,9 @@ id_to_remove = outliers['id'][(outliers.session == 250) & (outliers.electoral_te
 
 speeches['drop_dupl'] = ~speeches['id'].isin(id_to_remove)
 speeches.columns
+
+# Add year
+speeches['year'] = pd.DatetimeIndex(speeches['date']).year
 
 speeches.to_csv(os.path.join(path_definitions.DATABASE, "speeches_revised.csv"), index = False)
 
