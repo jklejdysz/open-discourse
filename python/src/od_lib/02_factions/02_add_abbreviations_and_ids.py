@@ -65,11 +65,18 @@ factions.insert(0, "abbreviation", "")
 factions.abbreviation = factions.faction_name.apply(lambda x: abbreviations_dict[x])
 
 unique_abbreviations = np.unique(factions.abbreviation)
-faction_ids = list(range(len(unique_abbreviations)))
+
+# Reorder to add parties that were created after the update of the dataset at the end of the list
+unique_abbreviations_reordered = np.concatenate([
+    unique_abbreviations[unique_abbreviations != 'BSW'],
+    np.array(['BSW'])
+])
+
+faction_ids = list(range(len(unique_abbreviations_reordered)))
 
 factions.insert(0, "id", -1)
 
-for abbrev, id in zip(unique_abbreviations, faction_ids):
+for abbrev, id in zip(unique_abbreviations_reordered, faction_ids):
     factions.id.loc[factions.abbreviation == abbrev] = id
 
 

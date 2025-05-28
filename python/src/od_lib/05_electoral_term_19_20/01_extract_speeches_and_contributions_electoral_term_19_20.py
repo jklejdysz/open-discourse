@@ -49,6 +49,7 @@ faction_patterns = {
     "Z": r"^Z$",
     "AfD": r"^AfD$",
     "DBP": r"^DBP$",
+    "BSW": r"(BSW|Wagenknecht)"
 }
 
 

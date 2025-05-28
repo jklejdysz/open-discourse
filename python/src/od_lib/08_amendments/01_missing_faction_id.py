@@ -186,3 +186,4 @@ dt.to_csv(os.path.join(path_definitions.DATABASE, "speeches_revised.csv"), index
 
 #dt = pd.read_csv(os.path.join(path_definitions.DATABASE, "speeches_revised.csv"))
 dt[dt.id==1108343]
+
